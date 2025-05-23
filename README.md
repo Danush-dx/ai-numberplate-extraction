@@ -1,97 +1,142 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# AI License Plate Extractor (React Native)
 
-# Getting Started
+This React Native application allows users to capture an image of a vehicle's license plate using the device camera, send the image to the Gemini API for text extraction, and view a history of scanned plates.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Features
 
-## Step 1: Start Metro
+*   **Image Capture**: Uses the device camera to take photos.
+*   **License Plate Extraction**: Integrates with the Gemini API to extract license plate numbers from images.
+*   **History**: Stores and displays a list of previously scanned license plates.
+*   **Cross-Platform (Android focused)**: Built with React Native, currently optimized and tested for Android.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Project Structure
 
-To start the Metro dev server, run the following command from the root of your React Native project:
-
-```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+```
+AiNumberPlateExtraction/
+├── android/                  # Android native project files
+├── ios/                      # iOS native project files (not fully configured for this project)
+├── src/
+│   ├── api/
+│   │   └── geminiApi.js      # Gemini API integration
+│   ├── components/
+│   │   ├── CameraView.js     # Handles image capture (using react-native-image-picker)
+│   │   ├── PlateHistoryItem.js # Renders individual history items
+│   │   └── PlateResult.js    # Displays captured image and extracted text
+│   ├── navigation/
+│   │   └── AppNavigator.js   # Stack navigator for app screens
+│   ├── screens/
+│   │   ├── HomeScreen.js     # Main screen with camera access and navigation
+│   │   ├── ResultScreen.js   # Displays extraction result and save option
+│   │   └── HistoryScreen.js  # Shows list of saved license plates
+│   ├── utils/
+│   │   ├── apiConfig.js      # API key configuration
+│   │   ├── permissions.js    # Permission handling (delegated to image picker)
+│   │   └── storage.js        # AsyncStorage utility for history
+├── .env                      # Environment variables (API_KEY) - IMPORTANT: Add to .gitignore
+├── .gitignore
+├── App.tsx                   # Main App component
+├── babel.config.js
+├── index.js                  # Entry point
+├── package.json              # Project dependencies and scripts
+└── README.md                 # This file
 ```
 
-## Step 2: Build and run your app
+## Prerequisites
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+Before you begin, ensure you have the following installed:
 
-### Android
+*   **Node.js**: LTS version (e.g., 18.x or 20.x). You can use [nvm](https://github.com/nvm-sh/nvm) (Node Version Manager) to manage Node versions.
+*   **Watchman**: A file watching service. Install via Homebrew on macOS: `brew install watchman`
+*   **Java Development Kit (JDK)**: Version 11 or 17 is recommended.
+*   **Android Studio**:
+    *   Install Android Studio ([download here](https://developer.android.com/studio)).
+    *   Ensure you have the Android SDK installed (typically comes with Android Studio).
+    *   Set up an Android Virtual Device (AVD) or connect a physical Android device for testing.
+    *   Make sure `ANDROID_HOME` environment variable is set. Add the following lines to your `~/.zshrc` or `~/.bashrc` file:
+        ```bash
+        export ANDROID_HOME=$HOME/Library/Android/sdk
+        export PATH=$PATH:$ANDROID_HOME/emulator
+        export PATH=$PATH:$ANDROID_HOME/tools
+        export PATH=$PATH:$ANDROID_HOME/tools/bin
+        export PATH=$PATH:$ANDROID_HOME/platform-tools
+        ```
+        Then run `source ~/.zshrc` or `source ~/.bashrc`.
 
-```sh
-# Using npm
-npm run android
+## Setup and Installation
 
-# OR using Yarn
-yarn android
-```
+1.  **Clone the Repository:**
+    ```bash
+    git clone https://github.com/Danush-dx/ai-numberplate-extraction.git
+    cd ai-numberplate-extraction
+    ```
 
-### iOS
+2.  **Install Dependencies:**
+    ```bash
+    npm install
+    # or
+    # yarn install
+    ```
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+3.  **Configure API Key:**
+    *   Create a `.env` file in the root of the project (`AiNumberPlateExtraction/.env`).
+    *   Add your Gemini API key to this file:
+        ```
+        API_KEY=YOUR_GEMINI_API_KEY_HERE
+        ```
+    *   **Important**: Ensure `.env` is listed in your `.gitignore` file to prevent your API key from being committed to version control. (It should already be there from the project setup).
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+## Running the Application (Android)
 
-```sh
-bundle install
-```
+1.  **Start the Metro Bundler:**
+    Open a terminal in the project root (`AiNumberPlateExtraction/`) and run:
+    ```bash
+    npm start -- --reset-cache
+    # or
+    # yarn start --reset-cache
+    ```
+    Keep this terminal window open.
 
-Then, and every time you update your native dependencies, run:
+2.  **Run on Android Device/Emulator:**
+    Open another terminal in the project root and run:
+    ```bash
+    npm run android
+    # or
+    # yarn android
+    ```
+    This will build the app and install it on your connected Android device or an active emulator.
 
-```sh
-bundle exec pod install
-```
+    If you encounter issues, ensure your Android device is properly connected (check with `adb devices`) or that your emulator is running.
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+## Usage
 
-```sh
-# Using npm
-npm run ios
+1.  Launch the app on your Android device/emulator.
+2.  The home screen will provide an option to "Scan License Plate".
+3.  Tapping this will open the device camera.
+4.  Take a photo of a license plate.
+5.  The app will send the image to the Gemini API.
+6.  The result (extracted plate number and the image) will be displayed.
+7.  You can choose to "Save to History" or "Scan Another Plate".
+8.  Access the "View History" screen from the home page to see all saved plates. You can delete individual entries or clear the entire history.
 
-# OR using Yarn
-yarn ios
-```
+## Troubleshooting
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+*   **`EADDRINUSE` error for Metro:**
+    If you see an error like "address already in use" for port 8081, it means another process is using it. Find and kill the process:
+    ```bash
+    sudo lsof -i :8081 # Find the PID
+    kill -9 <PID>
+    ```
+*   **Camera not opening / App crashing on image capture:**
+    *   Ensure all permissions (`CAMERA`, `READ_EXTERNAL_STORAGE`/`READ_MEDIA_IMAGES`) are correctly added in `AndroidManifest.xml`.
+    *   The `FileProvider` paths in `file_paths.xml` and `AndroidManifest.xml` must be correctly configured for `react-native-image-picker`.
+*   **API Errors:**
+    *   Double-check your `API_KEY` in the `.env` file.
+    *   Ensure your Gemini API key is valid and has the "Generative Language API" enabled in your Google Cloud project.
+    *   Check the console logs in Metro bundler or Android Studio Logcat for specific error messages from the API.
+*   **Build Fails (`compileSdkVersion`, etc.):**
+    *   Ensure your `android/build.gradle` has compatible `compileSdkVersion`, `targetSdkVersion`, and Gradle plugin versions.
+    *   Clean the Android build: `cd android && ./gradlew clean && cd ..` then try rebuilding.
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## Contributing
 
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
