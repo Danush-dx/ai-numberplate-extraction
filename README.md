@@ -32,7 +32,7 @@ AiNumberPlateExtraction/
 │   │   ├── apiConfig.js      # API key configuration
 │   │   ├── permissions.js    # Permission handling (delegated to image picker)
 │   │   └── storage.js        # AsyncStorage utility for history
-├── .env                      # Environment variables (API_KEY) - IMPORTANT: Add to .gitignore
+├── .env                      # Environment variables (API_KEY)
 ├── .gitignore
 ├── App.tsx                   # Main App component
 ├── babel.config.js
